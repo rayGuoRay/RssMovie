@@ -1,14 +1,18 @@
-package com.ray.rssmovie.activity;
+package com.ray.rssmovie.index;
 
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 
 import com.ray.rssmovie.R;
+import com.ray.rssmovie.activity.FragmentA;
+import com.ray.rssmovie.activity.FragmentB;
+import com.ray.rssmovie.activity.FragmentC;
+import com.ray.rssmovie.activity.IndexFragmentAdapter;
+import com.ray.rssmovie.base.BaseActivity;
 import com.ray.rssmovie.bean.MovieList;
 import com.ray.rssmovie.network.RetrofitWrapper;
 
@@ -21,7 +25,7 @@ import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-public class IndexActivity extends AppCompatActivity {
+public class IndexActivity extends BaseActivity {
 
     private TabLayout tabLayout;
     private ViewPager viewPager;

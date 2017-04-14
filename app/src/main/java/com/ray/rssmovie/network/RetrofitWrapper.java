@@ -1,7 +1,6 @@
 package com.ray.rssmovie.network;
 
 import okhttp3.OkHttpClient;
-//import retrofit2.GsonConverterFactory;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.GsonConverterFactory;
 import retrofit2.Retrofit;
