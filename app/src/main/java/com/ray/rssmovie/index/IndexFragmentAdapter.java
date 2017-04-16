@@ -1,4 +1,4 @@
-package com.ray.rssmovie.activity;
+package com.ray.rssmovie.index;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -7,11 +7,11 @@ import android.support.v4.app.FragmentPagerAdapter;
 import java.util.List;
 
 /**
- * Created by guolei on 17-4-7.
+ * Description
+ * Author      Ray.Guo
+ * Date        17/4/16 13:28
  */
-
 public class IndexFragmentAdapter extends FragmentPagerAdapter {
-
     private List<Fragment> mListFragment;
     private List<String> mListTitle;
 

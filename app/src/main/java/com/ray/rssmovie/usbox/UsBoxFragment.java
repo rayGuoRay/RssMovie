@@ -1,7 +1,6 @@
-package com.ray.rssmovie.activity;
+package com.ray.rssmovie.usbox;
 
 import android.os.Bundle;
-import android.renderscript.RSDriverException;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -14,7 +13,7 @@ import com.ray.rssmovie.R;
  * Created by guolei on 17-4-7.
  */
 
-public class FragmentA extends Fragment {
+public class UsBoxFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {

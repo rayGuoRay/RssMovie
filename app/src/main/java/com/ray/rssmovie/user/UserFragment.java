@@ -1,4 +1,4 @@
-package com.ray.rssmovie.activity;
+package com.ray.rssmovie.user;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -13,7 +13,7 @@ import com.ray.rssmovie.R;
  * Created by guolei on 17-4-7.
  */
 
-public class FragmentC extends Fragment {
+public class UserFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
