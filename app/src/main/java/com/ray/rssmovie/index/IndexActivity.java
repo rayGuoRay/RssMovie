@@ -23,9 +23,9 @@ import butterknife.ButterKnife;
 public class IndexActivity extends BaseActivity implements BottomNavigationBar.OnTabSelectedListener, ViewPager.OnPageChangeListener {
 
     @BindView(R.id.index_vp_content)
-    private ViewPager mIndexVpContent;
+    ViewPager mIndexVpContent;
     @BindView(R.id.index_bn_bar)
-    private BottomNavigationBar mIndexBnBar;
+    BottomNavigationBar mIndexBnBar;
 
     private List<Fragment> mIndexFragmentList;
     private IndexPresenter presenter;

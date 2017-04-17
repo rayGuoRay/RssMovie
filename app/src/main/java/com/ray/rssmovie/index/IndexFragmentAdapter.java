@@ -12,13 +12,12 @@ import java.util.List;
  * Date        17/4/16 13:28
  */
 public class IndexFragmentAdapter extends FragmentPagerAdapter {
-    private List<Fragment> mListFragment;
-    private List<String> mListTitle;
 
-    public IndexFragmentAdapter(FragmentManager fragmentManager, List<Fragment> fragments, List<String> titles) {
+    private List<Fragment> mListFragment;
+
+    public IndexFragmentAdapter(FragmentManager fragmentManager, List<Fragment> fragments) {
         super(fragmentManager);
         mListFragment = fragments;
-        mListTitle = titles;
     }
 
     @Override
@@ -28,7 +27,8 @@ public class IndexFragmentAdapter extends FragmentPagerAdapter {
 
     @Override
     public CharSequence getPageTitle(int position) {
-        return (mListTitle == null || position >= mListTitle.size()) ? null : mListTitle.get(position);
+        return null;
+//        return (mListTitle == null || position >= mListTitle.size()) ? null : mListTitle.get(position);
     }
 
     @Override
