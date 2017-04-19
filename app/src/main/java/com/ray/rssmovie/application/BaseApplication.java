@@ -2,6 +2,7 @@ package com.ray.rssmovie.application;
 
 import android.app.Application;
 
+import com.facebook.drawee.backends.pipeline.Fresco;
 import com.ray.rssmovie.network.RetrofitWrapper;
 
 /**
