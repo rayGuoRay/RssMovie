@@ -1,13 +1,23 @@
 package com.ray.rssmovie.index;
 
+import android.Manifest;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.TypedArray;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.DocumentsContract;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 
 import com.ashokvarma.bottomnavigation.BottomNavigationBar;
 import com.ashokvarma.bottomnavigation.BottomNavigationItem;
 import com.ray.rssmovie.R;
+import com.ray.rssmovie.TestActivity;
 import com.ray.rssmovie.base.BaseActivity;
 import com.ray.rssmovie.index.presenter.IndexPresenter;
 import com.ray.rssmovie.mrank.MovieRankFragment;
@@ -20,7 +30,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class IndexActivity extends BaseActivity implements BottomNavigationBar.OnTabSelectedListener, ViewPager.OnPageChangeListener {
+public class IndexActivity extends BaseActivity implements BottomNavigationBar.OnTabSelectedListener, ViewPager.OnPageChangeListener, ActivityCompat.OnRequestPermissionsResultCallback {
 
     @BindView(R.id.index_vp_content)
     ViewPager mIndexVpContent;
@@ -68,6 +78,64 @@ public class IndexActivity extends BaseActivity implements BottomNavigationBar.O
     @Override
     public void onTabSelected(int position) {
         mIndexVpContent.setCurrentItem(position);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.MANAGE_DOCUMENTS) != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.MANAGE_DOCUMENTS)) {
+
+                // Show an explanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+                Log.d("raytest", "we should explain why we need this permission!");
+            } else {
+
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.MANAGE_DOCUMENTS}, 999);
+            }
+        } else {
+            Log.d("raytest", "read in =normal");
+            readDocumentUi();
+        }
+    }
+
+    private void readDocumentUi() {
+//        Uri imageListUri = DocumentsContract.buildDocumentUri("com.smartisan.filemanager.providers.documents", "gallery.preview");
+//        Cursor cursor = getContentResolver().query(imageListUri, null, null, null, null);
+//        while (cursor.moveToNext()) {
+//            String itemUriStr = cursor.getString(1); // the column 1 is uri
+//            Log.d("raytest", "ItemString:" + itemUriStr);
+//        }
+//        DocumentsContract.deleteDocument(getContentResolver(), imageListUri);
+        String str = "test";
+        String str1 = "test1:1:10";
+        String str2 = "test2:0";
+        String[] s = str.split(":");
+//        int m = str1.indexOf(":");
+        Log.d("raytest", "Index Is:" + s.length);
+        Log.d("raytest", "Index Str:" + s[0]);
+//        Log.d("raytest", "Index2 Is:" + m);
+
+
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        Log.d("raytest", "Permission Size:" + permissions.length + "-----ResultSize:" + grantResults.length);
+        for (int i = 0; i < permissions.length; i++) {
+            Log.d("raytest", "Permission:" + permissions[i] + " GrantResult:" + grantResults[i]);
+        }
+        if (requestCode == 999) {
+            Log.d("raytest", "read in callback");
+            readDocumentUi();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 2222) {
+            Log.d("raytest", "Activity Restult:" + data.getData());
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
     }
 
     @Override

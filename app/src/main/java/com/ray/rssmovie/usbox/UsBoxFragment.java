@@ -9,12 +9,13 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.ray.rssmovie.R;
+import com.ray.rssmovie.base.BaseLazyFragment;
 
 /**
  * Created by guolei on 17-4-7.
  */
 
-public class UsBoxFragment extends Fragment {
+public class UsBoxFragment extends BaseLazyFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -28,5 +29,10 @@ public class UsBoxFragment extends Fragment {
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         Log.d("raytest", "UsBox Fragment setUserVisibleHint:" + isVisibleToUser);
+    }
+
+    @Override
+    protected void loadData() {
+        super.loadData();
     }
 }

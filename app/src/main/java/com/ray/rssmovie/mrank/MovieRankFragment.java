@@ -21,9 +21,7 @@ public class MovieRankFragment extends BaseLazyFragment {
 
     @butterknife.BindView(R.id.list_rl)
     android.support.v7.widget.RecyclerView listRl;
-    private View rootView;
-
-    private boolean isPrepared;
+    View rootView;
 
     @Nullable
     @Override
@@ -31,10 +29,7 @@ public class MovieRankFragment extends BaseLazyFragment {
         if(rootView == null){
             rootView = inflater.inflate(R.layout.fragment_movie_rank, container, false);
             ButterKnife.bind(this, rootView);
-            isPrepared = true;
-//            lazyLoad();
         }
-        Log.d("raytest", "Fragment onCreate View");
         return rootView;
     }
 
@@ -62,15 +57,8 @@ public class MovieRankFragment extends BaseLazyFragment {
         Log.d("raytest", "Fragment SetUserVisibleHint:" + isVisibleToUser);
     }
 
-    //    @Override
-//    protected void onInvisible() {
-//
-//    }
-//
-//    @Override
-//    protected void lazyLoad() {
-//        if (!isPrepared || !isVisible) {
-//            return;
-//        }
-//    }
+    @Override
+    protected void loadData() {
+        super.loadData();
+    }
 }

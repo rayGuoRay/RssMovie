@@ -1,6 +1,9 @@
 package com.ray.rssmovie.base;
 
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.view.View;
 
 /**
  * Description
@@ -9,25 +12,41 @@ import android.support.v4.app.Fragment;
  */
 public abstract class BaseLazyFragment extends Fragment {
 
-//    protected boolean mIsVisible;
-//
-//    @Override
-//    public void setUserVisibleHint(boolean isVisibleToUser) {
-//        super.setUserVisibleHint(isVisibleToUser);
-//        if(getUserVisibleHint()) {
-//            mIsVisible = true;
-//            onVisible();
-//        } else {
-//            mIsVisible = false;
-//            onInvisible();
-//        }
-//    }
-//
-//    protected void onVisible() {
-//        lazyLoad();
-//    }
-//
-//    protected abstract void onInvisible();
-//
-//    protected abstract void lazyLoad();
+    protected boolean mIsPrepared;
+    protected boolean mIsVisible;
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        mIsPrepared = true;
+        lazyLoad();
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (getUserVisibleHint()) {
+            mIsVisible = true;
+            onVisible();
+        } else {
+            mIsVisible = false;
+            onInvisible();
+        }
+
+    }
+
+    protected void onVisible() {
+        lazyLoad();
+    }
+
+    protected void onInvisible() {}
+
+    protected void lazyLoad() {
+        if (!mIsVisible || !mIsPrepared) {
+            return;
+        }
+        loadData();
+    }
+
+    protected void loadData() {}
 }
