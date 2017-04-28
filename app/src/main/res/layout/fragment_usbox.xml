@@ -6,8 +6,15 @@
     android:layout_height="match_parent"
     tools:context=".index.IndexActivity">
 
-<TextView
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:text="Us Box"/>
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/usbox_swrl"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/usbox_rl"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        </android.support.v7.widget.RecyclerView>
+    </android.support.v4.widget.SwipeRefreshLayout>
 </RelativeLayout>
