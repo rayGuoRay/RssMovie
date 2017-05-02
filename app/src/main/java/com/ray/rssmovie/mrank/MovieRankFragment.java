@@ -23,6 +23,12 @@ public class MovieRankFragment extends BaseLazyFragment {
     android.support.v7.widget.RecyclerView listRl;
     View rootView;
 
+    @Override
+    public void onAttach(Context context) {
+        Log.d("raytest", "Fragment onAttach");
+        super.onAttach(context);
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -34,21 +40,15 @@ public class MovieRankFragment extends BaseLazyFragment {
     }
 
     @Override
-    public void onAttach(Context context) {
-        Log.d("raytest", "Fragment onAttach");
-        super.onAttach(context);
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        Log.d("raytest", "Fragment onViewCreated");
+        super.onViewCreated(view, savedInstanceState);
     }
 
     @Override
     public void onStart() {
         Log.d("raytest", "Fragment onStart");
         super.onStart();
-    }
-
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        Log.d("raytest", "Fragment onViewCreated");
-        super.onViewCreated(view, savedInstanceState);
     }
 
     @Override

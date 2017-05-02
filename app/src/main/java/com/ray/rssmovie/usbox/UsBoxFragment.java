@@ -11,20 +11,28 @@ import android.view.ViewGroup;
 import com.ray.rssmovie.R;
 import com.ray.rssmovie.base.BaseLazyFragment;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
+
 /**
  * Created by guolei on 17-4-7.
  */
 
 public class UsBoxFragment extends BaseLazyFragment implements SwipeRefreshLayout.OnRefreshListener {
 
-    private SwipeRefreshLayout sw;
-    private RecyclerView rl;
+    @BindView(R.id.usbox_rl)
+    RecyclerView usboxRl;
+    @BindView(R.id.usbox_swrl)
+    SwipeRefreshLayout usboxSwrl;
+    Unbinder unbinder;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_usbox, container, false);
         // TODO: 17-4-28  init view
+        unbinder = ButterKnife.bind(this, rootView);
         return rootView;
     }
 
@@ -33,10 +41,10 @@ public class UsBoxFragment extends BaseLazyFragment implements SwipeRefreshLayou
         super.loadData();
 
 //        sw.setColorSchemeResources(color);
-        sw.setRefreshing(true);
-        sw.setOnRefreshListener(this);
+        usboxSwrl.setRefreshing(true);
+        usboxSwrl.setOnRefreshListener(this);
 
-        rl.addOnScrollListener(new RecyclerView.OnScrollListener() {
+        usboxRl.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
@@ -52,5 +60,11 @@ public class UsBoxFragment extends BaseLazyFragment implements SwipeRefreshLayou
     @Override
     public void onRefresh() {
 
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        unbinder.unbind();
     }
 }
