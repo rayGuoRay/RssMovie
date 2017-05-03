@@ -5,17 +5,22 @@ package com.ray.rssmovie.bean;
  */
 
 public class MovieSubject {
-    public String id;
-    public String title;
+
     public class Rating {
         public float max;
         public float average;
         public float starts;
         public float min;
     }
+
     public class Images {
         public String small;
         public String medium;
         public String large;
     }
+
+    public String id;
+    public String title;
+    public Rating rating;
+    public Images images;
 }

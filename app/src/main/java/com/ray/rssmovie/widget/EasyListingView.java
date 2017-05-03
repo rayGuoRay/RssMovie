@@ -2,7 +2,6 @@ package com.ray.rssmovie.widget;
 
 import android.content.Context;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
@@ -12,7 +11,8 @@ import android.view.View;
 import android.widget.RelativeLayout;
 
 import com.ray.rssmovie.R;
-import com.ray.rssmovie.adapter.EasyListingAdapter;
+
+import java.util.List;
 
 /**
  * Description
@@ -23,13 +23,23 @@ public class EasyListingView extends RelativeLayout implements SwipeRefreshLayou
 
     private static final String TAG = "EasyListingView";
 
+    private static final int LOAD_DATA_BY_TOPDROP_REFRESH = 1;
+    private static final int LOAD_DATA_BY_BOTTOM_REFRESH = 2;
+
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private RecyclerView mRecyclerView;
 
     private LinearLayoutManager mLayoutManager;
-    private EasyListingAdapter mAdapter;
+    private RecyclerView.Adapter mAdapter;
 
-    private int lastVisibleItem;
+    private LoadDataCallBack mLoadCallback;
+    private boolean mIsLoadingMore;
+
+    //start load data in implements class
+    public interface LoadDataCallBack {
+        void onTopLoadStarted();
+        void onBottomLoadStarted(int lastPosition);
+    }
 
     private RecyclerView.OnScrollListener scrollListener = new RecyclerView.OnScrollListener() {
 
@@ -42,7 +52,7 @@ public class EasyListingView extends RelativeLayout implements SwipeRefreshLayou
         @Override
         public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
             super.onScrolled(recyclerView, dx, dy);
-            scrollToLoadMore();
+            scrollToBottomLoadMore();
         }
     };
 
@@ -60,29 +70,70 @@ public class EasyListingView extends RelativeLayout implements SwipeRefreshLayou
     }
 
     private void init(Context context, AttributeSet attrs) {
-        View easyView = LayoutInflater.from(getContext()).inflate(R.layout.layout_easy_listing, null);
+        View easyView = LayoutInflater.from(context).inflate(R.layout.layout_easy_listing, this, true);
         mSwipeRefreshLayout = (SwipeRefreshLayout) easyView.findViewById(R.id.easylist_swipe_layout);
         mRecyclerView = (RecyclerView) easyView.findViewById(R.id.easylist_recycler_view);
         mLayoutManager = new LinearLayoutManager(context);
-        mAdapter = new EasyListingAdapter(context);
         mRecyclerView.setLayoutManager(mLayoutManager);
         mSwipeRefreshLayout.setOnRefreshListener(this);
         mRecyclerView.addOnScrollListener(scrollListener);
+        // init param
+        mIsLoadingMore = false;
+    }
+
+    public void startRefresh(boolean isRefresh) {
+        mSwipeRefreshLayout.setRefreshing(isRefresh);
+    }
+
+    public void setAdapter(RecyclerView.Adapter adapter) {
+        this.mAdapter = adapter;
+        mRecyclerView.setAdapter(mAdapter);
+    }
+
+    public void setLoadDataCallback(LoadDataCallBack callback) {
+        this.mLoadCallback = callback;
+    }
+
+    public void loadFinishedNotify() {
+        if (mSwipeRefreshLayout.isRefreshing()) {
+            mSwipeRefreshLayout.setRefreshing(false);
+        }
+        mAdapter.notifyDataSetChanged();
+        mAdapter.notifyItemRemoved(mAdapter.getItemCount());
+        mIsLoadingMore = false;
     }
 
     @Override
     public void onRefresh() {
-        loadData();
+        if(mLoadCallback != null) {
+            mLoadCallback.onTopLoadStarted();
+        }
+        loadData(LOAD_DATA_BY_TOPDROP_REFRESH);
     }
 
-    private void scrollToLoadMore() {
+    private void scrollToBottomLoadMore() {
+        if (mAdapter == null) {
+            return;
+        }
         int lastVisiblePosition = mLayoutManager.findLastVisibleItemPosition();
         if (lastVisiblePosition + 1 == mAdapter.getItemCount()) {
-
+            if (mSwipeRefreshLayout.isRefreshing()) {
+                mAdapter.notifyItemRemoved(mAdapter.getItemCount());
+                return;
+            }
+            if (!mIsLoadingMore) {
+                mIsLoadingMore = true;
+                if (mLoadCallback != null) {
+                    mLoadCallback.onBottomLoadStarted(lastVisiblePosition);
+                }
+                loadData(LOAD_DATA_BY_BOTTOM_REFRESH);
+            }
         }
     }
 
-    private void loadData() {
-        // TODO: 17/4/29 to load more data at here
+    private void loadData(int type) {
+        if (type == LOAD_DATA_BY_TOPDROP_REFRESH) {
+        } else if (type == LOAD_DATA_BY_BOTTOM_REFRESH) {
+        }
     }
 }
