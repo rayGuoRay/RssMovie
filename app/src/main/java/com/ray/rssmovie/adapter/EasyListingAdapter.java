@@ -7,13 +7,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-<<<<<<< HEAD
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.ray.rssmovie.R;
 import com.ray.rssmovie.bean.MovieSubject;
-=======
-import com.ray.rssmovie.R;
->>>>>>> bdd80fd50a04cbf3f868a76acbeb6f45c536908d
 
 import java.util.List;
 
