@@ -45,11 +45,11 @@ public class RetrofitWrapper {
         return mNetWorkApi;
     }
 
-    public <T> T create(Class<T> tClass) {
-        if (mRetrofit != null) {
-            return mRetrofit.create(tClass);
-        }
-        return null;
-    }
+//    public <T> T create(Class<T> tClass) {
+//        if (mRetrofit != null) {
+//            return mRetrofit.create(tClass);
+//        }
+//        return null;
+//    }
 }
 

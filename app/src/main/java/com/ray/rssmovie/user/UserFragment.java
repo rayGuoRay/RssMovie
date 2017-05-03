@@ -2,37 +2,91 @@ package com.ray.rssmovie.user;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.ray.rssmovie.R;
+import com.ray.rssmovie.adapter.EasyListingAdapter;
 import com.ray.rssmovie.base.BaseLazyFragment;
+import com.ray.rssmovie.bean.MovieList;
+import com.ray.rssmovie.network.RetrofitWrapper;
+import com.ray.rssmovie.widget.EasyListingView;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import rx.Observable;
+import rx.Observer;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by guolei on 17-4-7.
  */
 
-public class UserFragment extends BaseLazyFragment {
+public class UserFragment extends BaseLazyFragment implements EasyListingView.LoadDataCallBack {
+
+    private EasyListingView mElv;
+    private List<String> list = new ArrayList<>();
+
+    private Observer<String> observer = new Observer<String>() {
+        @Override
+        public void onNext(String s) {
+            list.add(s);
+            mElv.loadFinishedNotify();
+        }
+
+        @Override
+        public void onCompleted() {
+
+        }
+
+        @Override
+        public void onError(Throwable e) {
+
+        }
+    };
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_index, container, false);
-        Log.d("raytest", "User Fragment OnCreate View");
+        View rootView = inflater.inflate(R.layout.fragment_user, container, false);
+        mElv = (EasyListingView) rootView.findViewById(R.id.user_elv);
         return rootView;
-//        return super.onCreateView(inflater, container, savedInstanceState);
-    }
-
-    @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-        Log.d("raytest", "User Fragment setUserVisible Hint:" + isVisibleToUser);
     }
 
     @Override
     protected void loadData() {
         super.loadData();
+        EasyListingAdapter mAdapter = new EasyListingAdapter(getContext());
+        mAdapter.setListData(list);
+        mElv.setAdapter(mAdapter);
+        mElv.setLoadDataCallback(this);
+        mElv.startRefresh(true);
+        startRxLoad(0);
+    }
+
+    @Override
+    public void onTopLoadStarted() {
+        Log.d("raytest", "On Top Load Started");
+        list.clear();
+        startRxLoad(0);
+    }
+
+    @Override
+    public void onBottomLoadStarted(int position) {
+        startRxLoad(position + 1);
+    }
+
+    private void startRxLoad(int start) {
+        Observable<MovieList> observable = RetrofitWrapper.getInstance().getNetWorkApi().getTop250(start, 10);
+        observable.map(movieList -> movieList.subjects)
+                .flatMap(subjectList -> Observable.from(subjectList))
+                .map(subject -> subject.title)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(observer);
     }
 }
