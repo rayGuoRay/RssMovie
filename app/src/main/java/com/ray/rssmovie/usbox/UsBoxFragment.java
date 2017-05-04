@@ -9,62 +9,91 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.ray.rssmovie.R;
+import com.ray.rssmovie.adapter.EasyListingAdapter;
+import com.ray.rssmovie.application.AppConstant;
 import com.ray.rssmovie.base.BaseLazyFragment;
+import com.ray.rssmovie.bean.MovieList;
+import com.ray.rssmovie.bean.MovieSubject;
+import com.ray.rssmovie.bean.UsBoxMovie;
+import com.ray.rssmovie.bean.UsBoxMovieList;
+import com.ray.rssmovie.network.RetrofitWrapper;
+import com.ray.rssmovie.widget.EasyListingView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import rx.Observable;
+import rx.Observer;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by guolei on 17-4-7.
  */
 
-public class UsBoxFragment extends BaseLazyFragment implements SwipeRefreshLayout.OnRefreshListener {
+public class UsBoxFragment extends BaseLazyFragment implements EasyListingView.LoadDataCallBack {
 
-    @BindView(R.id.usbox_rl)
-    RecyclerView usboxRl;
-    @BindView(R.id.usbox_swrl)
-    SwipeRefreshLayout usboxSwrl;
-    Unbinder unbinder;
+    private EasyListingView mElv;
+    private List<MovieSubject> list = new ArrayList<MovieSubject>();
+
+    private Observer<UsBoxMovie> observer = new Observer<UsBoxMovie>() {
+        @Override
+        public void onNext(UsBoxMovie subject) {
+            list.add(subject.subject);
+            mElv.loadFinishedNotify();
+        }
+
+        @Override
+        public void onCompleted() {
+
+        }
+
+        @Override
+        public void onError(Throwable e) {
+
+        }
+    };
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_usbox, container, false);
-        // TODO: 17-4-28  init view
-        unbinder = ButterKnife.bind(this, rootView);
+        View rootView = inflater.inflate(R.layout.fragment_user, container, false);
+        mElv = (EasyListingView) rootView.findViewById(R.id.user_elv);
         return rootView;
     }
 
     @Override
     protected void loadData() {
         super.loadData();
-
-//        sw.setColorSchemeResources(color);
-        usboxSwrl.setRefreshing(true);
-        usboxSwrl.setOnRefreshListener(this);
-
-        usboxRl.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-            }
-
-            @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-            }
-        });
+        EasyListingAdapter mAdapter = new EasyListingAdapter(getContext(), this);
+        mAdapter.setListData(list);
+        mElv.setAdapter(mAdapter);
+        mElv.setLoadDataCallback(this);
+        mElv.startRefresh(true);
+        onTopLoadStarted();
     }
 
     @Override
-    public void onRefresh() {
-
+    public void onTopLoadStarted() {
+        list.clear();
+        startRxLoad();
     }
 
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        unbinder.unbind();
+    public void onBottomLoadStarted(int position) {
+//        startRxLoad();
+    }
+
+    private void startRxLoad() {
+        Observable<UsBoxMovieList> observable = RetrofitWrapper.getInstance().getNetWorkApi().getNabor();
+        observable.map(movieList -> movieList.subjects)
+                .flatMap(subjectList -> Observable.from(subjectList))
+//                .map(subject -> subject.title)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(observer);
     }
 }

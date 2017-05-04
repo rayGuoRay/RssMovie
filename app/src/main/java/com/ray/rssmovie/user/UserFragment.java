@@ -60,7 +60,7 @@ public class UserFragment extends BaseLazyFragment implements EasyListingView.Lo
     @Override
     protected void loadData() {
         super.loadData();
-        EasyListingAdapter mAdapter = new EasyListingAdapter(getContext());
+        EasyListingAdapter mAdapter = new EasyListingAdapter(getContext(), this);
         mAdapter.setListData(list);
         mElv.setAdapter(mAdapter);
         mElv.setLoadDataCallback(this);

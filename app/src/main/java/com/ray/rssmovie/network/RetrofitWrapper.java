@@ -18,8 +18,16 @@ public class RetrofitWrapper {
     private NetWorkApi mNetWorkApi;
 
     private RetrofitWrapper() {
+//        if (BuildConfig.DEBUG) {
+//            // Log信息拦截器
+//            HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
+//            loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);//这里可以选择拦截级别
+//
+//            //设置 Debug Log 模式
+//            builder.addInterceptor(loggingInterceptor);
+//        }
         mOkHttpClient = new OkHttpClient.Builder()
-                .addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
+                .addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BASIC))
                 .build();
         mRetrofit = new Retrofit.Builder()
                 .client(mOkHttpClient)

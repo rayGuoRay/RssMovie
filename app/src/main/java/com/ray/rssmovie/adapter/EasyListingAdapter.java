@@ -2,6 +2,7 @@ package com.ray.rssmovie.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,11 +24,17 @@ public class EasyListingAdapter extends RecyclerView.Adapter {
     private static final int TYPE_ITEM = 0;
     private static final int TYPE_FOOTER = 1;
 
+    public interface OnListItemClickCallback {
+        void onListItemClick(int position, String id);
+    }
+
     private Context mContext;
     private List<MovieSubject> mData;
+    private OnListItemClickCallback mCallback;
 
-    public EasyListingAdapter(Context context) {
+    public EasyListingAdapter(Context context, OnListItemClickCallback callback) {
         this.mContext = context;
+        this.mCallback = callback;
     }
 
     public void setListData(List data) {
@@ -68,27 +75,52 @@ public class EasyListingAdapter extends RecyclerView.Adapter {
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        if (holder instanceof ItemViewHolder) {
-            MovieSubject subject = mData.get(position);
-            ((ItemViewHolder) holder).tv.setText(subject.title);
-            ((ItemViewHolder) holder).iv.setImageURI(subject.images.large);
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
+        if (holder instanceof ItemViewHolder == false) {
+            return;
         }
+        MovieSubject subject = mData.get(position);
+        String subjectTitle = null;
+        String imageUrl = null;
+//            if (TextUtils.isEmpty(subject.data)) {
+        String subjectId = subject.id;
+        subjectTitle = subject.title;
+        imageUrl = subject.images.large;
+//            } else {
+//                BaseSubject baseSubject = subject.subject;
+//                subjectTitle = baseSubject.title;
+//                imageUrl = baseSubject.images.large;
+//            }
+        if (!TextUtils.isEmpty(subjectTitle)) {
+            ((ItemViewHolder) holder).tv.setText(subjectTitle);
+        }
+        if (!TextUtils.isEmpty(imageUrl)) {
+            ((ItemViewHolder) holder).iv.setImageURI(imageUrl);
+        }
+        ((ItemViewHolder) holder).cv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mCallback != null) {
+                    mCallback.onListItemClick(position, subjectId);
+                }
+            }
+        });
     }
 
     static class ItemViewHolder extends RecyclerView.ViewHolder {
+        View cv;
         SimpleDraweeView iv;
         TextView tv;
 
         public ItemViewHolder(View view) {
             super(view);
+            cv = view.findViewById(R.id.cv_content);
             tv = (TextView) view.findViewById(R.id.tv_date);
             iv = (SimpleDraweeView) view.findViewById(R.id.iv_data);
         }
     }
 
     static class FootViewHolder extends RecyclerView.ViewHolder {
-
         public FootViewHolder(View view) {
             super(view);
         }

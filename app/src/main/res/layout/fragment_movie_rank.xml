@@ -6,6 +6,8 @@
     android:layout_height="match_parent"
     tools:context=".index.IndexActivity">
 
-    <include layout="@layout/layout_film_list"/>
-
+    <com.ray.rssmovie.widget.EasyListingView
+        android:id="@+id/user_elv"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 </RelativeLayout>

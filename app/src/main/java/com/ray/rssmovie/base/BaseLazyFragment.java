@@ -1,16 +1,20 @@
 package com.ray.rssmovie.base;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.View;
+
+import com.ray.rssmovie.adapter.EasyListingAdapter;
+import com.ray.rssmovie.detail.MovieDetailActivity;
 
 /**
  * Description
  * Author      Ray.Guo
  * Date        17/4/17 22:24
  */
-public abstract class BaseLazyFragment extends Fragment {
+public abstract class BaseLazyFragment extends Fragment implements EasyListingAdapter.OnListItemClickCallback{
 
     protected boolean mIsPrepared;
     protected boolean mIsVisible;
@@ -32,7 +36,13 @@ public abstract class BaseLazyFragment extends Fragment {
             mIsVisible = false;
             onInvisible();
         }
+    }
 
+    @Override
+    public void onListItemClick(int position, String id) {
+        Intent intent = new Intent(getContext(), MovieDetailActivity.class);
+        intent.putExtra("subjectId", id);
+        startActivity(intent);
     }
 
     protected void onVisible() {

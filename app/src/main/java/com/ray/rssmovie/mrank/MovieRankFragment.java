@@ -9,56 +9,87 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.ray.rssmovie.R;
+import com.ray.rssmovie.adapter.EasyListingAdapter;
+import com.ray.rssmovie.application.AppConstant;
 import com.ray.rssmovie.base.BaseLazyFragment;
+import com.ray.rssmovie.bean.MovieList;
+import com.ray.rssmovie.bean.MovieSubject;
+import com.ray.rssmovie.network.RetrofitWrapper;
+import com.ray.rssmovie.widget.EasyListingView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.ButterKnife;
+import rx.Observable;
+import rx.Observer;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by guolei on 17-4-7.
  */
 
-public class MovieRankFragment extends BaseLazyFragment {
+public class MovieRankFragment extends BaseLazyFragment implements EasyListingView.LoadDataCallBack {
 
-    @butterknife.BindView(R.id.list_rl)
-    android.support.v7.widget.RecyclerView listRl;
-    View rootView;
+    private EasyListingView mElv;
+    private List<MovieSubject> list = new ArrayList<MovieSubject>();
 
-    @Override
-    public void onAttach(Context context) {
-        Log.d("raytest", "Fragment onAttach");
-        super.onAttach(context);
-    }
+    private Observer<MovieSubject> observer = new Observer<MovieSubject>() {
+        @Override
+        public void onNext(MovieSubject subject) {
+            list.add(subject);
+            mElv.loadFinishedNotify();
+        }
+
+        @Override
+        public void onCompleted() {
+
+        }
+
+        @Override
+        public void onError(Throwable e) {
+
+        }
+    };
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        if(rootView == null){
-            rootView = inflater.inflate(R.layout.fragment_movie_rank, container, false);
-            ButterKnife.bind(this, rootView);
-        }
+        View rootView = inflater.inflate(R.layout.fragment_user, container, false);
+        mElv = (EasyListingView) rootView.findViewById(R.id.user_elv);
         return rootView;
-    }
-
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        Log.d("raytest", "Fragment onViewCreated");
-        super.onViewCreated(view, savedInstanceState);
-    }
-
-    @Override
-    public void onStart() {
-        Log.d("raytest", "Fragment onStart");
-        super.onStart();
-    }
-
-    @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-        Log.d("raytest", "Fragment SetUserVisibleHint:" + isVisibleToUser);
     }
 
     @Override
     protected void loadData() {
         super.loadData();
+        EasyListingAdapter mAdapter = new EasyListingAdapter(getContext(), this);
+        mAdapter.setListData(list);
+        mElv.setAdapter(mAdapter);
+        mElv.setLoadDataCallback(this);
+        mElv.startRefresh(true);
+        onTopLoadStarted();
+    }
+
+    @Override
+    public void onTopLoadStarted() {
+        list.clear();
+        startRxLoad(0);
+    }
+
+    @Override
+    public void onBottomLoadStarted(int position) {
+        startRxLoad(position + 1);
+    }
+
+    private void startRxLoad(int start) {
+        Observable<MovieList> observable = RetrofitWrapper.getInstance().getNetWorkApi().getTop250(start, AppConstant.PAGE_SIZE);
+        observable.map(movieList -> movieList.subjects)
+                .flatMap(subjectList -> Observable.from(subjectList))
+//                .map(subject -> subject.title)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(observer);
     }
 }
