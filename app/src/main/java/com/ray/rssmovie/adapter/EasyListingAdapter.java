@@ -14,6 +14,9 @@ import com.ray.rssmovie.bean.MovieSubject;
 
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 /**
  * Description
  * Author      Ray.Guo
@@ -108,15 +111,14 @@ public class EasyListingAdapter extends RecyclerView.Adapter {
     }
 
     static class ItemViewHolder extends RecyclerView.ViewHolder {
-        View cv;
-        SimpleDraweeView iv;
-        TextView tv;
+
+        @BindView(R.id.cv_content) View cv;
+        @BindView(R.id.iv_data) SimpleDraweeView iv;
+        @BindView(R.id.tv_date) TextView tv;
 
         public ItemViewHolder(View view) {
             super(view);
-            cv = view.findViewById(R.id.cv_content);
-            tv = (TextView) view.findViewById(R.id.tv_date);
-            iv = (SimpleDraweeView) view.findViewById(R.id.iv_data);
+            ButterKnife.bind(this, view);
         }
     }
 

@@ -18,6 +18,9 @@ import com.ray.rssmovie.widget.EasyListingView;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
 import rx.Observable;
 import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
@@ -28,14 +31,18 @@ import rx.schedulers.Schedulers;
  */
 public class UserFragment extends BaseLazyFragment implements EasyListingView.LoadDataCallBack {
 
-    private EasyListingView mElv;
+    @BindView(R.id.user_elv)
+    EasyListingView mUserElv;
+
+    Unbinder unbinder;
+
     private List<MovieSubject> list = new ArrayList<MovieSubject>();
 
     private Observer<MovieSubject> observer = new Observer<MovieSubject>() {
         @Override
         public void onNext(MovieSubject subject) {
             list.add(subject);
-            mElv.loadFinishedNotify();
+            mUserElv.loadFinishedNotify();
         }
 
         @Override
@@ -53,7 +60,8 @@ public class UserFragment extends BaseLazyFragment implements EasyListingView.Lo
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_user, container, false);
-        mElv = (EasyListingView) rootView.findViewById(R.id.user_elv);
+        mUserElv = (EasyListingView) rootView.findViewById(R.id.user_elv);
+        unbinder = ButterKnife.bind(this, rootView);
         return rootView;
     }
 
@@ -62,9 +70,9 @@ public class UserFragment extends BaseLazyFragment implements EasyListingView.Lo
         super.loadData();
         EasyListingAdapter mAdapter = new EasyListingAdapter(getContext(), this);
         mAdapter.setListData(list);
-        mElv.setAdapter(mAdapter);
-        mElv.setLoadDataCallback(this);
-        mElv.startRefresh(true);
+        mUserElv.setAdapter(mAdapter);
+        mUserElv.setLoadDataCallback(this);
+        mUserElv.startRefresh(true);
         onTopLoadStarted();
     }
 
@@ -87,5 +95,11 @@ public class UserFragment extends BaseLazyFragment implements EasyListingView.Lo
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(observer);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        unbinder.unbind();
     }
 }
