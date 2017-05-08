@@ -66,6 +66,12 @@ public class UserFragment extends BaseLazyFragment implements EasyListingView.Lo
     }
 
     @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        unbinder.unbind();
+    }
+
+    @Override
     protected void loadData() {
         super.loadData();
         EasyListingAdapter mAdapter = new EasyListingAdapter(getContext(), this);
@@ -97,9 +103,4 @@ public class UserFragment extends BaseLazyFragment implements EasyListingView.Lo
                 .subscribe(observer);
     }
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        unbinder.unbind();
-    }
 }

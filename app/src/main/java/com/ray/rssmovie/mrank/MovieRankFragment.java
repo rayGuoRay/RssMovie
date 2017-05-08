@@ -65,6 +65,12 @@ public class MovieRankFragment extends BaseLazyFragment implements EasyListingVi
     }
 
     @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        unbinder.unbind();
+    }
+
+    @Override
     protected void loadData() {
         super.loadData();
         EasyListingAdapter mAdapter = new EasyListingAdapter(getContext(), this);
@@ -95,9 +101,4 @@ public class MovieRankFragment extends BaseLazyFragment implements EasyListingVi
                 .subscribe(observer);
     }
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        unbinder.unbind();
-    }
 }
