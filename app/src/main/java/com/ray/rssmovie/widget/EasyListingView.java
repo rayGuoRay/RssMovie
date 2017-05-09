@@ -23,9 +23,6 @@ public class EasyListingView extends RelativeLayout implements SwipeRefreshLayou
 
     private static final String TAG = "EasyListingView";
 
-    private static final int LOAD_DATA_BY_TOPDROP_REFRESH = 1;
-    private static final int LOAD_DATA_BY_BOTTOM_REFRESH = 2;
-
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private RecyclerView mRecyclerView;
 
@@ -90,6 +87,10 @@ public class EasyListingView extends RelativeLayout implements SwipeRefreshLayou
         mRecyclerView.setAdapter(mAdapter);
     }
 
+    public RecyclerView.Adapter getAdapter() {
+        return mAdapter;
+    }
+
     public void setLoadDataCallback(LoadDataCallBack callback) {
         this.mLoadCallback = callback;
     }
@@ -108,7 +109,6 @@ public class EasyListingView extends RelativeLayout implements SwipeRefreshLayou
         if(mLoadCallback != null) {
             mLoadCallback.onTopLoadStarted();
         }
-        loadData(LOAD_DATA_BY_TOPDROP_REFRESH);
     }
 
     private void scrollToBottomLoadMore() {
@@ -126,14 +126,7 @@ public class EasyListingView extends RelativeLayout implements SwipeRefreshLayou
                 if (mLoadCallback != null) {
                     mLoadCallback.onBottomLoadStarted(lastVisiblePosition);
                 }
-                loadData(LOAD_DATA_BY_BOTTOM_REFRESH);
             }
-        }
-    }
-
-    private void loadData(int type) {
-        if (type == LOAD_DATA_BY_TOPDROP_REFRESH) {
-        } else if (type == LOAD_DATA_BY_BOTTOM_REFRESH) {
         }
     }
 }

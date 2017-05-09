@@ -2,6 +2,7 @@ package com.ray.rssmovie.usbox;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -91,7 +92,11 @@ public class UsBoxFragment extends BaseLazyFragment implements EasyListingView.L
 
     @Override
     public void onBottomLoadStarted(int position) {
-//        startRxLoad();
+        Log.d("raytest", "On Bottom Started Position:" + position);
+        data.remove(posiiton);
+        notifyItemRemoved(position);
+        if(deleteIndex != data.size()){      // 这个判断的意义就是如果移除的是最后一个，就不用管它了，= =whatever，老板还不发工资啊啊啊啊啊啊
+            notifyItemRangeChanged(position, data.size() - position);
     }
 
     private void startRxLoad() {
