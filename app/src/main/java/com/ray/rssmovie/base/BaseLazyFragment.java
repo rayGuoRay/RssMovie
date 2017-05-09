@@ -20,13 +20,6 @@ public abstract class BaseLazyFragment extends Fragment implements EasyListingAd
     protected boolean mIsVisible;
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        mIsPrepared = true;
-        lazyLoad();
-    }
-
-    @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (getUserVisibleHint()) {
@@ -36,6 +29,19 @@ public abstract class BaseLazyFragment extends Fragment implements EasyListingAd
             mIsVisible = false;
             onInvisible();
         }
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        mIsPrepared = true;
+        lazyLoad();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mIsPrepared = false;
     }
 
     @Override
