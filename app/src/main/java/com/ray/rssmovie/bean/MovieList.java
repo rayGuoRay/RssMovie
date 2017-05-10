@@ -9,5 +9,8 @@ import javax.security.auth.Subject;
  */
 
 public class MovieList {
+    public int start;
+    public int count;
+    public int total;
     public List<MovieSubject> subjects;
 }

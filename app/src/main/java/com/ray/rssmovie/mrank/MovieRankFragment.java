@@ -2,6 +2,8 @@ package com.ray.rssmovie.mrank;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,12 +38,13 @@ public class MovieRankFragment extends BaseLazyFragment implements EasyListingVi
     EasyListingView mUserElv;
 
     Unbinder unbinder;
-    private List<MovieSubject> list = new ArrayList<MovieSubject>();
+    private int mTotalCount;
+    private List<MovieSubject> mList = new ArrayList<MovieSubject>();
 
     private Observer<MovieSubject> observer = new Observer<MovieSubject>() {
         @Override
         public void onNext(MovieSubject subject) {
-            list.add(subject);
+            mList.add(subject);
             mUserElv.loadFinishedNotify();
         }
 
@@ -74,7 +77,7 @@ public class MovieRankFragment extends BaseLazyFragment implements EasyListingVi
     protected void loadData() {
         super.loadData();
         EasyListingAdapter mAdapter = new EasyListingAdapter(getContext(), this);
-        mAdapter.setListData(list);
+        mAdapter.setListData(mList);
         mUserElv.setAdapter(mAdapter);
         mUserElv.setLoadDataCallback(this);
         mUserElv.startRefresh(true);
@@ -83,18 +86,29 @@ public class MovieRankFragment extends BaseLazyFragment implements EasyListingVi
 
     @Override
     public void onTopLoadStarted() {
-        list.clear();
+        mList.clear();
         startRxLoad(0);
     }
 
     @Override
     public void onBottomLoadStarted(int position) {
+        Log.d("raytest", "TotalCount:" + mTotalCount);
+        if (position >= mTotalCount) {
+            RecyclerView.Adapter mAdapter = mUserElv.getAdapter();
+            ((EasyListingAdapter) mAdapter).setFootState(EasyListingAdapter.FOOT_STATE_LOAD_NOMORE);
+            return;
+        }
+        RecyclerView.Adapter mAdapter = mUserElv.getAdapter();
+        ((EasyListingAdapter) mAdapter).setFootState(EasyListingAdapter.FOOT_STATE_LOADING);
         startRxLoad(position + 1);
     }
 
     private void startRxLoad(int start) {
         Observable<MovieList> observable = RetrofitWrapper.getInstance().getNetWorkApi().getTop250(start, AppConstant.PAGE_SIZE);
-        observable.map(movieList -> movieList.subjects)
+        observable.map(movieList -> {
+                    mTotalCount = movieList.total;
+                    return movieList.subjects;
+                })
                 .flatMap(subjectList -> Observable.from(subjectList))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

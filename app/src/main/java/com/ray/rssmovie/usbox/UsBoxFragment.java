@@ -2,6 +2,8 @@ package com.ray.rssmovie.usbox;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,11 +34,14 @@ import rx.schedulers.Schedulers;
 
 public class UsBoxFragment extends BaseLazyFragment implements EasyListingView.LoadDataCallBack {
 
+    private static final int MAX_COUNT = 10;
+
     @BindView(R.id.user_elv)
     EasyListingView mUserElv;
 
     Unbinder unbinder;
 
+    private int mTotalCount;
     private List<MovieSubject> list = new ArrayList<MovieSubject>();
 
     private Observer<UsBoxMovie> observer = new Observer<UsBoxMovie>() {
@@ -91,14 +96,12 @@ public class UsBoxFragment extends BaseLazyFragment implements EasyListingView.L
 
     @Override
     public void onBottomLoadStarted(int position) {
-        mUserElv.removeViewAt(position);
-//        RecyclerView.Adapter adapter = mUserElv.getAdapter();
-//
-//        data.remove(posiiton);
-//        notifyItemRemoved(position);
-//        if(deleteIndex != list.size()) {
-//            notifyItemRangeChanged(position, data.size() - position);
-//        }
+        Log.d("raytest", "UsBox oN Bottom Position:" + position);
+        if (position >= MAX_COUNT) {
+            RecyclerView.Adapter mAdapter = mUserElv.getAdapter();
+            ((EasyListingAdapter) mAdapter).setFootState(EasyListingAdapter.FOOT_STATE_LOAD_NOMORE);
+            return;
+        }
     }
 
     private void startRxLoad() {

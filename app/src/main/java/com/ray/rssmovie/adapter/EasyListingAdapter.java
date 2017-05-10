@@ -3,6 +3,7 @@ package com.ray.rssmovie.adapter;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,8 +25,12 @@ import butterknife.ButterKnife;
  */
 public class EasyListingAdapter extends RecyclerView.Adapter {
 
-    private static final int TYPE_ITEM = 0;
-    private static final int TYPE_FOOTER = 1;
+    public static final int FOOT_STATE_LOADING = 0;
+    public static final int FOOT_STATE_LOAD_ERROR = 1;
+    public static final int FOOT_STATE_LOAD_NOMORE = 2;
+
+    private static final int TYPE_ITEM_NORMAL = 0;
+    private static final int TYPE_ITEM_FOOTER = 1;
 
     public interface OnListItemClickCallback {
         void onListItemClick(int position, String id);
@@ -33,11 +38,18 @@ public class EasyListingAdapter extends RecyclerView.Adapter {
 
     private Context mContext;
     private List<MovieSubject> mData;
+    private FootViewHolder mFootHolder;
     private OnListItemClickCallback mCallback;
 
     public EasyListingAdapter(Context context, OnListItemClickCallback callback) {
         this.mContext = context;
         this.mCallback = callback;
+    }
+
+    public void setFootState(int state) {
+        if (mFootHolder != null) {
+            mFootHolder.setFootState(state);
+        }
     }
 
     public void setListData(List data) {
@@ -51,28 +63,30 @@ public class EasyListingAdapter extends RecyclerView.Adapter {
 
     @Override
     public int getItemCount() {
-        return (mData == null || mData.size() == 0) ? 0 : mData.size();
+        return (mData == null || mData.size() == 0) ? 0 : mData.size() + 1;
     }
 
     @Override
     public int getItemViewType(int position) {
+        Log.d("raytest", "Current Item View Position:" + position);
         if (position + 1 == getItemCount()) {
-            return TYPE_FOOTER;
+            return TYPE_ITEM_FOOTER;
         } else {
-            return TYPE_ITEM;
+            return TYPE_ITEM_NORMAL;
         }
     }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        if (viewType == TYPE_ITEM) {
+        if (viewType == TYPE_ITEM_NORMAL) {
             View view = LayoutInflater.from(mContext).inflate(R.layout.item_normal, parent,
                     false);
             return new ItemViewHolder(view);
-        } else if (viewType == TYPE_FOOTER) {
+        } else if (viewType == TYPE_ITEM_FOOTER) {
             View view = LayoutInflater.from(mContext).inflate(R.layout.item_foot, parent,
                     false);
-            return new FootViewHolder(view);
+            mFootHolder = new FootViewHolder(view);
+            return mFootHolder;
         }
         return null;
     }
@@ -85,15 +99,9 @@ public class EasyListingAdapter extends RecyclerView.Adapter {
         MovieSubject subject = mData.get(position);
         String subjectTitle = null;
         String imageUrl = null;
-//            if (TextUtils.isEmpty(subject.data)) {
         String subjectId = subject.id;
         subjectTitle = subject.title;
         imageUrl = subject.images.large;
-//            } else {
-//                BaseSubject baseSubject = subject.subject;
-//                subjectTitle = baseSubject.title;
-//                imageUrl = baseSubject.images.large;
-//            }
         if (!TextUtils.isEmpty(subjectTitle)) {
             ((ItemViewHolder) holder).tv.setText(subjectTitle);
         }
@@ -123,8 +131,31 @@ public class EasyListingAdapter extends RecyclerView.Adapter {
     }
 
     static class FootViewHolder extends RecyclerView.ViewHolder {
+
+        @BindView(R.id.loading_viewstub) View loadingView;
+        @BindView(R.id.end_viewstub) View nomoreView;
+        @BindView(R.id.network_error_viewstub) View errorView;
+
         public FootViewHolder(View view) {
             super(view);
+            ButterKnife.bind(this, view);
+        }
+
+        public void setFootState(int state) {
+            loadingView.setVisibility(View.GONE);
+            nomoreView.setVisibility(View.GONE);
+            errorView.setVisibility(View.GONE);
+            switch (state) {
+                case FOOT_STATE_LOADING:
+                    loadingView.setVisibility(View.VISIBLE);
+                    break;
+                case FOOT_STATE_LOAD_NOMORE:
+                    nomoreView.setVisibility(View.VISIBLE);
+                    break;
+                case FOOT_STATE_LOAD_ERROR:
+                    errorView.setVisibility(View.VISIBLE);
+                    break;
+            }
         }
     }
 }
