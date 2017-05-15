@@ -43,7 +43,6 @@ public class EasyListingView extends RelativeLayout implements SwipeRefreshLayou
         @Override
         public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
             super.onScrollStateChanged(recyclerView, newState);
-            Log.d(TAG, "EasyListingView scroll stated:" + newState);
         }
 
         @Override
@@ -105,7 +104,6 @@ public class EasyListingView extends RelativeLayout implements SwipeRefreshLayou
             mSwipeRefreshLayout.setRefreshing(false);
         }
         mAdapter.notifyDataSetChanged();
-        mAdapter.notifyItemRemoved(mAdapter.getItemCount());
         mIsLoadingMore = false;
     }
 
@@ -120,46 +118,17 @@ public class EasyListingView extends RelativeLayout implements SwipeRefreshLayou
         if (mAdapter == null) {
             return;
         }
-//        RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
-//            if (layoutManagerType == null) {
-//                if (layoutManager instanceof LinearLayoutManager) {
-//                    layoutManagerType = LayoutManagerType.LinearLayout;
-//                } else if (layoutManager instanceof GridLayoutManager) {
-//                    layoutManagerType = LayoutManagerType.GridLayout;
-//                } else if (layoutManager instanceof StaggeredGridLayoutManager) {
-//                    layoutManagerType = LayoutManagerType.StaggeredGridLayout;
-//                } else {
-//                    throw new RuntimeException(
-//                            "Unsupported LayoutManager used. Valid ones are LinearLayoutManager, GridLayoutManager and StaggeredGridLayoutManager");
-//                }
-//            }
-
-//            switch (layoutManagerType) {
-//                case LinearLayout:
-//                    lastVisibleItemPosition = ((LinearLayoutManager) layoutManager).findLastVisibleItemPosition();
-//                    break;
-//                case GridLayout:
-//                    lastVisibleItemPosition = ((GridLayoutManager) layoutManager).findLastVisibleItemPosition();
-//                    break;
-//                case StaggeredGridLayout:
-//                    StaggeredGridLayoutManager staggeredGridLayoutManager = (StaggeredGridLayoutManager) layoutManager;
-//                    if (lastPositions == null) {
-//                        lastPositions = new int[staggeredGridLayoutManager.getSpanCount()];
-//                    }
-//                    staggeredGridLayoutManager.findLastVisibleItemPositions(lastPositions);
-//                    lastVisibleItemPosition = findMax(lastPositions);
-//                    break;
-//            }
-
         int lastVisiblePosition = mLayoutManager.findLastVisibleItemPosition();
         if (lastVisiblePosition + 1 == mAdapter.getItemCount()) {
             if (mSwipeRefreshLayout.isRefreshing()) {
+                Log.d("raytest", "Scroll To Bottom Notify Item Removed");
                 mAdapter.notifyItemRemoved(mAdapter.getItemCount());
                 return;
             }
             if (!mIsLoadingMore) {
                 mIsLoadingMore = true;
                 if (mLoadCallback != null) {
+                    Log.d("raytest", "On Bottom Load Started~~~");
                     mLoadCallback.onBottomLoadStarted(lastVisiblePosition);
                 }
             }

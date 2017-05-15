@@ -13,6 +13,7 @@ import com.facebook.drawee.view.SimpleDraweeView;
 import com.ray.rssmovie.R;
 import com.ray.rssmovie.bean.MovieSubject;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -53,7 +54,10 @@ public class EasyListingAdapter extends RecyclerView.Adapter {
     }
 
     public void setListData(List data) {
-        this.mData = data;
+        this.mData = new ArrayList<MovieSubject>();
+        if (data != null && data.size() > 0) {
+            this.mData.addAll(data);
+        }
     }
 
     @Override
@@ -68,7 +72,6 @@ public class EasyListingAdapter extends RecyclerView.Adapter {
 
     @Override
     public int getItemViewType(int position) {
-        Log.d("raytest", "Current Item View Position:" + position);
         if (position + 1 == getItemCount()) {
             return TYPE_ITEM_FOOTER;
         } else {
@@ -93,7 +96,7 @@ public class EasyListingAdapter extends RecyclerView.Adapter {
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
-        if (holder instanceof ItemViewHolder == false) {
+        if (holder instanceof FootViewHolder) {
             return;
         }
         MovieSubject subject = mData.get(position);

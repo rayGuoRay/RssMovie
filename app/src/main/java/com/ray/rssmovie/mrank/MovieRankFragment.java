@@ -3,7 +3,6 @@ package com.ray.rssmovie.mrank;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,6 +44,8 @@ public class MovieRankFragment extends BaseLazyFragment implements EasyListingVi
         @Override
         public void onNext(MovieSubject subject) {
             mList.add(subject);
+            RecyclerView.Adapter mAdapter = mUserElv.getAdapter();
+            ((EasyListingAdapter) mAdapter).setListData(mList);
             mUserElv.loadFinishedNotify();
         }
 
@@ -92,7 +93,6 @@ public class MovieRankFragment extends BaseLazyFragment implements EasyListingVi
 
     @Override
     public void onBottomLoadStarted(int position) {
-        Log.d("raytest", "TotalCount:" + mTotalCount);
         if (position >= mTotalCount) {
             RecyclerView.Adapter mAdapter = mUserElv.getAdapter();
             ((EasyListingAdapter) mAdapter).setFootState(EasyListingAdapter.FOOT_STATE_LOAD_NOMORE);

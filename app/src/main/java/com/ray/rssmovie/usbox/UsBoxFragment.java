@@ -48,6 +48,8 @@ public class UsBoxFragment extends BaseLazyFragment implements EasyListingView.L
         @Override
         public void onNext(UsBoxMovie subject) {
             list.add(subject.subject);
+            RecyclerView.Adapter mAdapter = mUserElv.getAdapter();
+            ((EasyListingAdapter) mAdapter).setListData(list);
             mUserElv.loadFinishedNotify();
         }
 
