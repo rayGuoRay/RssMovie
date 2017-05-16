@@ -8,7 +8,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RelativeLayout;
@@ -74,10 +73,6 @@ public class EasyListingView extends RelativeLayout implements SwipeRefreshLayou
         int gridColumn = typedArray.getInt(R.styleable.EasyListingView_easyGridColumnNum, 1);
         int spanCount = typedArray.getInt(R.styleable.EasyListingView_easySpanCount, 1);
         int spanOrientation = typedArray.getInt(R.styleable.EasyListingView_easySpanOriention, 1);
-        Log.d("raytest", "LayoutType:" + layoutType);
-        Log.d("raytest", "GridCoulumn:" + gridColumn);
-        Log.d("raytest", "SpanCount:" + spanCount);
-        Log.d("raytest", "SpanOrientation:" + spanOrientation);
         typedArray.recycle();
         View easyView = LayoutInflater.from(context).inflate(R.layout.layout_easy_listing, this, true);
         mSwipeRefreshLayout = (SwipeRefreshLayout) easyView.findViewById(R.id.easylist_swipe_layout);

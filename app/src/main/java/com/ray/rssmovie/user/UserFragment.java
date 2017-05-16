@@ -43,14 +43,19 @@ public class UserFragment extends BaseLazyFragment implements EasyListingView.Lo
         @Override
         public void onNext(MovieSubject subject) {
             list.add(subject);
-            RecyclerView.Adapter mAdapter = mUserElv.getAdapter();
-            ((EasyListingAdapter) mAdapter).setListData(list);
-            mUserElv.loadFinishedNotify();
         }
 
         @Override
         public void onCompleted() {
-
+            if (mUserElv == null) {
+                return;
+            }
+            RecyclerView.Adapter mAdapter = mUserElv.getAdapter();
+            if (mAdapter == null) {
+                return;
+            }
+            ((EasyListingAdapter) mAdapter).setListData(list);
+            mUserElv.loadFinishedNotify();
         }
 
         @Override
@@ -105,5 +110,4 @@ public class UserFragment extends BaseLazyFragment implements EasyListingView.Lo
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(observer);
     }
-
 }

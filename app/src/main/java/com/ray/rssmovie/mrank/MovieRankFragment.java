@@ -44,14 +44,19 @@ public class MovieRankFragment extends BaseLazyFragment implements EasyListingVi
         @Override
         public void onNext(MovieSubject subject) {
             mList.add(subject);
-            RecyclerView.Adapter mAdapter = mUserElv.getAdapter();
-            ((EasyListingAdapter) mAdapter).setListData(mList);
-            mUserElv.loadFinishedNotify();
         }
 
         @Override
         public void onCompleted() {
-
+            if (mUserElv == null) {
+                return;
+            }
+            RecyclerView.Adapter mAdapter = mUserElv.getAdapter();
+            if (mAdapter == null) {
+                return;
+            }
+            ((EasyListingAdapter) mAdapter).setListData(mList);
+            mUserElv.loadFinishedNotify();
         }
 
         @Override
