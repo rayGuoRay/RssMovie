@@ -2,12 +2,10 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:easylist="http://schemas.android.com/apk/res-auto"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.ray.rssmovie.widget.EasyListingView
+    <com.ray.easylistview.EasyListView
         android:id="@+id/user_elv"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

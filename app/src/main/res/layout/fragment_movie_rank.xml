@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".index.IndexActivity">
 
-    <com.ray.rssmovie.widget.EasyListingView
+    <com.ray.easylistview.EasyListView
         android:id="@+id/user_elv"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>

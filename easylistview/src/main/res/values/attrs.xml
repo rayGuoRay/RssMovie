@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="EasyListingView">
+        <attr name="layoutType" format="enum">
+            <enum name="linear" value="0"/>
+            <enum name="grid" value="1"/>
+            <enum name="stagger" value="2"/>
+        </attr>
+        <attr name="gridColumnNum" format="integer"/>
+        <attr name="spanCount" format="integer"/>
+        <attr name="spanOriention">
+            <enum name="horizontal" value="0"/>
+            <enum name="vertical" value="1"/> 　
+        </attr>
+        <attr name="normalLayout" format="reference"/>
+        <attr name="loadingLayout" format="reference"/>
+        <attr name="nomoreLayout" format="reference"/>
+        <attr name="errorLayout" format="reference"/>
+    </declare-styleable>
+</resources>

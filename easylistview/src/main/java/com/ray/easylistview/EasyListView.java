@@ -1,4 +1,4 @@
-package com.ray.rssmovie.widget;
+package com.ray.easylistview;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -12,26 +12,35 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RelativeLayout;
 
-import com.ray.rssmovie.R;
+import java.util.List;
 
 /**
  * Description
  * Author      Ray.Guo
  * Date        17/4/29 22:02
  */
-public class EasyListingView extends RelativeLayout implements SwipeRefreshLayout.OnRefreshListener {
+public class EasyListView extends RelativeLayout implements SwipeRefreshLayout.OnRefreshListener {
 
     private static final String TAG = "EasyListingView";
 
+    private Context mContext;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private RecyclerView mRecyclerView;
 
     private RecyclerView.LayoutManager mLayoutManager;
-    private RecyclerView.Adapter mAdapter;
+    private EasyListAdapter mAdapter;
 
     private LoadDataCallBack mLoadCallback;
     private boolean mIsLoadingMore;
 
+    private int mLayoutType;
+    private int mGridColumn;
+    private int mSpanCount;
+    private int mSpanOrientation;
+    private int mNormalLayoutId;
+    private int mLoadingLayoutId;
+    private int mNoMoreLayoutId;
+    private int mErrorLayoutId;
     private int[] mStagLastPositions;
 
     //start load data in implements class
@@ -54,39 +63,53 @@ public class EasyListingView extends RelativeLayout implements SwipeRefreshLayou
         }
     };
 
-    public EasyListingView(Context context) {
+    public EasyListView(Context context) {
         this(context, null);
     }
 
-    public EasyListingView(Context context, AttributeSet attrs) {
+    public EasyListView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public EasyListingView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public EasyListView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init(context, attrs);
     }
 
     private void init(Context context, AttributeSet attrs) {
+        mContext = context;
+        initParam(context, attrs);
+        initView(context);
+        initAdapter();
+    }
+
+    private void initParam(Context context, AttributeSet attrs) {
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.EasyListingView);
-        int layoutType = typedArray.getInt(R.styleable.EasyListingView_easyLayoutType, 0);
-        int gridColumn = typedArray.getInt(R.styleable.EasyListingView_easyGridColumnNum, 1);
-        int spanCount = typedArray.getInt(R.styleable.EasyListingView_easySpanCount, 1);
-        int spanOrientation = typedArray.getInt(R.styleable.EasyListingView_easySpanOriention, 1);
+        mLayoutType = typedArray.getInt(R.styleable.EasyListingView_easyLayoutType, 0);
+        mGridColumn = typedArray.getInt(R.styleable.EasyListingView_easyGridColumnNum, 1);
+        mSpanCount = typedArray.getInt(R.styleable.EasyListingView_easySpanCount, 1);
+        mSpanOrientation = typedArray.getInt(R.styleable.EasyListingView_easySpanOriention, 1);
+        mNormalLayoutId = typedArray.getResourceId(R.styleable.EasyListingView_normalLayout, 0);
+        mLoadingLayoutId = typedArray.getResourceId(R.styleable.EasyListingView_loadingLayout, 0);
+        mNoMoreLayoutId = typedArray.getResourceId(R.styleable.EasyListingView_nomoreLayout, 0);
+        mErrorLayoutId = typedArray.getResourceId(R.styleable.EasyListingView_errorLayout, 0);
         typedArray.recycle();
-        View easyView = LayoutInflater.from(context).inflate(R.layout.layout_easy_listing, this, true);
+    }
+
+    private void initView(Context context) {
+        View easyView = LayoutInflater.from(context).inflate(R.layout.layout_easy_list, this, true);
         mSwipeRefreshLayout = (SwipeRefreshLayout) easyView.findViewById(R.id.easylist_swipe_layout);
         mRecyclerView = (RecyclerView) easyView.findViewById(R.id.easylist_recycler_view);
         mLayoutManager = new LinearLayoutManager(context);
-        switch (layoutType) {
+        switch (mLayoutType) {
             case 1:
-                mLayoutManager = new GridLayoutManager(context, gridColumn);
+                mLayoutManager = new GridLayoutManager(context, mGridColumn);
                 break;
             case 2:
-                if (spanOrientation == 0) {
-                    mLayoutManager = new StaggeredGridLayoutManager(spanCount, StaggeredGridLayoutManager.HORIZONTAL);
+                if (mSpanOrientation == 0) {
+                    mLayoutManager = new StaggeredGridLayoutManager(mSpanCount, StaggeredGridLayoutManager.HORIZONTAL);
                 } else {
-                    mLayoutManager = new StaggeredGridLayoutManager(spanCount, StaggeredGridLayoutManager.VERTICAL);
+                    mLayoutManager = new StaggeredGridLayoutManager(mSpanCount, StaggeredGridLayoutManager.VERTICAL);
                 }
                 break;
             default:
@@ -100,29 +123,12 @@ public class EasyListingView extends RelativeLayout implements SwipeRefreshLayou
         mIsLoadingMore = false;
     }
 
-    public void startRefresh(boolean isRefresh) {
-        mSwipeRefreshLayout.setRefreshing(isRefresh);
-    }
-
-    public void setAdapter(RecyclerView.Adapter adapter) {
-        this.mAdapter = adapter;
-        mRecyclerView.setAdapter(mAdapter);
-    }
-
-    public RecyclerView.Adapter getAdapter() {
-        return mAdapter;
-    }
-
-    public void setLoadDataCallback(LoadDataCallBack callback) {
-        this.mLoadCallback = callback;
-    }
-
-    public void loadFinishedNotify() {
-        if (mSwipeRefreshLayout.isRefreshing()) {
-            mSwipeRefreshLayout.setRefreshing(false);
-        }
-        mAdapter.notifyDataSetChanged();
-        mIsLoadingMore = false;
+    private void initAdapter() {
+        this.mAdapter = new EasyListAdapter(mContext);
+        this.mAdapter.setNormalLayoutId(mNormalLayoutId);
+        this.mAdapter.setLoadingLayoutId(mLoadingLayoutId);
+        this.mAdapter.setNoMoreLayoutId(mNoMoreLayoutId);
+        this.mAdapter.setErrorLayoutId(mErrorLayoutId);
     }
 
     @Override
@@ -170,5 +176,43 @@ public class EasyListingView extends RelativeLayout implements SwipeRefreshLayou
             }
         }
         return max;
+    }
+
+    public void setLoadDataCallback(LoadDataCallBack callback) {
+        this.mLoadCallback = callback;
+    }
+
+    public void setTopRefreshing(boolean isRefresh) {
+        mSwipeRefreshLayout.setRefreshing(isRefresh);
+    }
+
+    public void bindAdapter(EasyListHolderCallBack holderCallBack) {
+        if (mAdapter == null) {
+            return;
+        }
+        mAdapter.setHolderCallBack(holderCallBack);
+        mRecyclerView.setAdapter(mAdapter);
+    }
+
+    public void setSourceList(List data) {
+        if (mAdapter == null) {
+            return;
+        }
+        mAdapter.setEasyList(data);
+    }
+
+    public void setFootViewState(int footState) {
+        if (mAdapter == null) {
+            return;
+        }
+        mAdapter.setFootViewState(footState);
+    }
+
+    public void loadFinishedToNotify() {
+        if (mSwipeRefreshLayout.isRefreshing()) {
+            mSwipeRefreshLayout.setRefreshing(false);
+        }
+        mAdapter.notifyDataSetChanged();
+        mIsLoadingMore = false;
     }
 }

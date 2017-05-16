@@ -7,6 +7,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.ray.easylistview.EasyListHolderCallBack;
+import com.ray.easylistview.EasyListView;
 import com.ray.rssmovie.R;
 import com.ray.rssmovie.adapter.EasyListingAdapter;
 import com.ray.rssmovie.application.AppConstant;
@@ -14,7 +16,6 @@ import com.ray.rssmovie.base.BaseLazyFragment;
 import com.ray.rssmovie.bean.MovieList;
 import com.ray.rssmovie.bean.MovieSubject;
 import com.ray.rssmovie.network.RetrofitWrapper;
-import com.ray.rssmovie.widget.EasyListingView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,11 +31,11 @@ import rx.schedulers.Schedulers;
 /**
  * Created by guolei on 17-4-7.
  */
-public class UserFragment extends BaseLazyFragment implements EasyListingView.LoadDataCallBack {
+public class UserFragment extends BaseLazyFragment implements EasyListView.LoadDataCallBack {
 
     @BindView(R.id.user_elv)
-    EasyListingView mUserElv;
-
+    EasyListView mUserElv;
+    private int mTotalCount;
     Unbinder unbinder;
 
     private List<MovieSubject> list = new ArrayList<MovieSubject>();
@@ -50,12 +51,8 @@ public class UserFragment extends BaseLazyFragment implements EasyListingView.Lo
             if (mUserElv == null) {
                 return;
             }
-            RecyclerView.Adapter mAdapter = mUserElv.getAdapter();
-            if (mAdapter == null) {
-                return;
-            }
-            ((EasyListingAdapter) mAdapter).setListData(list);
-            mUserElv.loadFinishedNotify();
+            mUserElv.setSourceList(list);
+            mUserElv.loadFinishedToNotify();
         }
 
         @Override
@@ -68,7 +65,7 @@ public class UserFragment extends BaseLazyFragment implements EasyListingView.Lo
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_user, container, false);
-        mUserElv = (EasyListingView) rootView.findViewById(R.id.user_elv);
+        mUserElv = (EasyListView) rootView.findViewById(R.id.user_elv);
         unbinder = ButterKnife.bind(this, rootView);
         return rootView;
     }
@@ -82,11 +79,14 @@ public class UserFragment extends BaseLazyFragment implements EasyListingView.Lo
     @Override
     protected void loadData() {
         super.loadData();
-        EasyListingAdapter mAdapter = new EasyListingAdapter(getContext(), this);
-        mAdapter.setListData(list);
-        mUserElv.setAdapter(mAdapter);
+        mUserElv.bindAdapter(new EasyListHolderCallBack() {
+            @Override
+            public RecyclerView.ViewHolder onCreateNormal(View view) {
+                return super.onCreateNormal(view);
+            }
+        });
         mUserElv.setLoadDataCallback(this);
-        mUserElv.startRefresh(true);
+        mUserElv.setTopRefreshing(true);
         onTopLoadStarted();
     }
 
@@ -98,14 +98,21 @@ public class UserFragment extends BaseLazyFragment implements EasyListingView.Lo
 
     @Override
     public void onBottomLoadStarted(int position) {
+        if (position >= mTotalCount) {
+            mUserElv.setFootViewState(EasyListingAdapter.FOOT_STATE_LOAD_NOMORE);
+            return;
+        }
+        mUserElv.setFootViewState(EasyListingAdapter.FOOT_STATE_LOADING);
         startRxLoad(position + 1);
     }
 
     private void startRxLoad(int start) {
         Observable<MovieList> observable = RetrofitWrapper.getInstance().getNetWorkApi().getTop250(start, AppConstant.PAGE_SIZE);
-        observable.map(movieList -> movieList.subjects)
+        observable.map(movieList -> {
+                    mTotalCount = movieList.total;
+                    return movieList.subjects;
+                })
                 .flatMap(subjectList -> Observable.from(subjectList))
-//                .map(subject -> subject.title)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(observer);

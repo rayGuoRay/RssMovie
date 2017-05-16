@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.ray.easylistview.EasyListView;
 import com.ray.rssmovie.R;
 import com.ray.rssmovie.adapter.EasyListingAdapter;
 import com.ray.rssmovie.application.AppConstant;
@@ -14,7 +15,6 @@ import com.ray.rssmovie.base.BaseLazyFragment;
 import com.ray.rssmovie.bean.MovieList;
 import com.ray.rssmovie.bean.MovieSubject;
 import com.ray.rssmovie.network.RetrofitWrapper;
-import com.ray.rssmovie.widget.EasyListingView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,10 +31,10 @@ import rx.schedulers.Schedulers;
  * Created by guolei on 17-4-7.
  */
 
-public class MovieRankFragment extends BaseLazyFragment implements EasyListingView.LoadDataCallBack {
+public class MovieRankFragment extends BaseLazyFragment implements EasyListView.LoadDataCallBack {
 
     @BindView(R.id.user_elv)
-    EasyListingView mUserElv;
+    EasyListView mUserElv;
 
     Unbinder unbinder;
     private int mTotalCount;
@@ -56,7 +56,7 @@ public class MovieRankFragment extends BaseLazyFragment implements EasyListingVi
                 return;
             }
             ((EasyListingAdapter) mAdapter).setListData(mList);
-            mUserElv.loadFinishedNotify();
+            mUserElv.loadFinishedToNotify();
         }
 
         @Override
@@ -86,7 +86,7 @@ public class MovieRankFragment extends BaseLazyFragment implements EasyListingVi
         mAdapter.setListData(mList);
         mUserElv.setAdapter(mAdapter);
         mUserElv.setLoadDataCallback(this);
-        mUserElv.startRefresh(true);
+        mUserElv.setTopRefreshing(true);
         onTopLoadStarted();
     }
 
