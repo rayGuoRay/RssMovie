@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <declare-styleable name="EasyListingView">
+    <declare-styleable name="EasyRefreshView">
         <attr name="layoutType" format="enum">
             <enum name="linear" value="0"/>
             <enum name="grid" value="1"/>

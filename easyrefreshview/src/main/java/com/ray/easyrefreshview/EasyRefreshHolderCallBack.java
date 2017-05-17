@@ -1,4 +1,4 @@
-package com.ray.easylistview;
+package com.ray.easyrefreshview;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -7,22 +7,22 @@ import android.view.View;
  * Created by guolei on 17-5-16.
  */
 
-public class EasyListHolderCallBack {
+public class EasyRefreshHolderCallBack {
 
     public RecyclerView.ViewHolder onCreateNormal(View view) {
-        return new EasyListAdapterHolder(view);
+        return new EasyRefreshAdapterHolder(view);
     }
 
     public RecyclerView.ViewHolder onCreateLoading(View view) {
-        return new EasyListAdapterHolder(view);
+        return new EasyRefreshAdapterHolder(view);
     }
 
     public RecyclerView.ViewHolder onCreateNoMore(View view) {
-        return new EasyListAdapterHolder(view);
+        return new EasyRefreshAdapterHolder(view);
     }
 
     public RecyclerView.ViewHolder onCreateError(View view) {
-        return new EasyListAdapterHolder(view);
+        return new EasyRefreshAdapterHolder(view);
     }
 
     public void onBindNormal(RecyclerView.ViewHolder holder, int position) {

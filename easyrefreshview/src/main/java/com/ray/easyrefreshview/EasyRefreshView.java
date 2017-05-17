@@ -1,4 +1,4 @@
-package com.ray.easylistview;
+package com.ray.easyrefreshview;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -19,16 +19,16 @@ import java.util.List;
  * Author      Ray.Guo
  * Date        17/4/29 22:02
  */
-public class EasyListView extends RelativeLayout implements SwipeRefreshLayout.OnRefreshListener {
+public class EasyRefreshView extends RelativeLayout implements SwipeRefreshLayout.OnRefreshListener {
 
-    private static final String TAG = "EasyListingView";
+    private static final String TAG = "EasyRefreshView";
 
     private Context mContext;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private RecyclerView mRecyclerView;
 
     private RecyclerView.LayoutManager mLayoutManager;
-    private EasyListAdapter mAdapter;
+    private EasyRefreshAdapter mAdapter;
 
     private LoadDataCallBack mLoadCallback;
     private boolean mIsLoadingMore;
@@ -63,15 +63,15 @@ public class EasyListView extends RelativeLayout implements SwipeRefreshLayout.O
         }
     };
 
-    public EasyListView(Context context) {
+    public EasyRefreshView(Context context) {
         this(context, null);
     }
 
-    public EasyListView(Context context, AttributeSet attrs) {
+    public EasyRefreshView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public EasyListView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public EasyRefreshView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init(context, attrs);
     }
@@ -84,22 +84,22 @@ public class EasyListView extends RelativeLayout implements SwipeRefreshLayout.O
     }
 
     private void initParam(Context context, AttributeSet attrs) {
-        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.EasyListingView);
-        mLayoutType = typedArray.getInt(R.styleable.EasyListingView_easyLayoutType, 0);
-        mGridColumn = typedArray.getInt(R.styleable.EasyListingView_easyGridColumnNum, 1);
-        mSpanCount = typedArray.getInt(R.styleable.EasyListingView_easySpanCount, 1);
-        mSpanOrientation = typedArray.getInt(R.styleable.EasyListingView_easySpanOriention, 1);
-        mNormalLayoutId = typedArray.getResourceId(R.styleable.EasyListingView_normalLayout, 0);
-        mLoadingLayoutId = typedArray.getResourceId(R.styleable.EasyListingView_loadingLayout, 0);
-        mNoMoreLayoutId = typedArray.getResourceId(R.styleable.EasyListingView_nomoreLayout, 0);
-        mErrorLayoutId = typedArray.getResourceId(R.styleable.EasyListingView_errorLayout, 0);
+        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.EasyRefreshView);
+        mLayoutType = typedArray.getInt(R.styleable.EasyRefreshView_layoutType, 0);
+        mGridColumn = typedArray.getInt(R.styleable.EasyRefreshView_gridColumnNum, 1);
+        mSpanCount = typedArray.getInt(R.styleable.EasyRefreshView_spanCount, 1);
+        mSpanOrientation = typedArray.getInt(R.styleable.EasyRefreshView_spanOriention, 1);
+        mNormalLayoutId = typedArray.getResourceId(R.styleable.EasyRefreshView_normalLayout, 0);
+        mLoadingLayoutId = typedArray.getResourceId(R.styleable.EasyRefreshView_loadingLayout, 0);
+        mNoMoreLayoutId = typedArray.getResourceId(R.styleable.EasyRefreshView_nomoreLayout, 0);
+        mErrorLayoutId = typedArray.getResourceId(R.styleable.EasyRefreshView_errorLayout, 0);
         typedArray.recycle();
     }
 
     private void initView(Context context) {
-        View easyView = LayoutInflater.from(context).inflate(R.layout.layout_easy_list, this, true);
-        mSwipeRefreshLayout = (SwipeRefreshLayout) easyView.findViewById(R.id.easylist_swipe_layout);
-        mRecyclerView = (RecyclerView) easyView.findViewById(R.id.easylist_recycler_view);
+        View easyView = LayoutInflater.from(context).inflate(R.layout.layout_easy_refresh, this, true);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) easyView.findViewById(R.id.easyrefresh_swipe_layout);
+        mRecyclerView = (RecyclerView) easyView.findViewById(R.id.easyrefresh_recycler_view);
         mLayoutManager = new LinearLayoutManager(context);
         switch (mLayoutType) {
             case 1:
@@ -124,7 +124,7 @@ public class EasyListView extends RelativeLayout implements SwipeRefreshLayout.O
     }
 
     private void initAdapter() {
-        this.mAdapter = new EasyListAdapter(mContext);
+        this.mAdapter = new EasyRefreshAdapter(mContext);
         this.mAdapter.setNormalLayoutId(mNormalLayoutId);
         this.mAdapter.setLoadingLayoutId(mLoadingLayoutId);
         this.mAdapter.setNoMoreLayoutId(mNoMoreLayoutId);
@@ -186,10 +186,11 @@ public class EasyListView extends RelativeLayout implements SwipeRefreshLayout.O
         mSwipeRefreshLayout.setRefreshing(isRefresh);
     }
 
-    public void bindAdapter(EasyListHolderCallBack holderCallBack) {
+    public void bindAdapter(EasyRefreshHolderCallBack holderCallBack) {
         if (mAdapter == null) {
             return;
         }
+        mAdapter.setEasyList(null);
         mAdapter.setHolderCallBack(holderCallBack);
         mRecyclerView.setAdapter(mAdapter);
     }
@@ -199,20 +200,31 @@ public class EasyListView extends RelativeLayout implements SwipeRefreshLayout.O
             return;
         }
         mAdapter.setEasyList(data);
+        if (mSwipeRefreshLayout.isRefreshing()) {
+            mSwipeRefreshLayout.setRefreshing(false);
+        }
+        mIsLoadingMore = false;
+        mAdapter.notifyDataSetChanged();
     }
 
-    public void setFootViewState(int footState) {
+    public void setFootViewState(final int footState) {
         if (mAdapter == null) {
             return;
         }
         mAdapter.setFootViewState(footState);
+        post(new Runnable() {
+            @Override
+            public void run() {
+                mAdapter.notifyItemChanged(mAdapter.getItemCount() - 1);
+            }
+        });
     }
 
-    public void loadFinishedToNotify() {
-        if (mSwipeRefreshLayout.isRefreshing()) {
-            mSwipeRefreshLayout.setRefreshing(false);
-        }
-        mAdapter.notifyDataSetChanged();
-        mIsLoadingMore = false;
-    }
+//    public void loadFinishedToNotify() {
+//        if (mSwipeRefreshLayout.isRefreshing()) {
+//            mSwipeRefreshLayout.setRefreshing(false);
+//        }
+//        mAdapter.notifyDataSetChanged();
+//        mIsLoadingMore = false;
+//    }
 }

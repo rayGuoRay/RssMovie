@@ -1,18 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:easylist="http://schemas.android.com/apk/res-auto"
+    xmlns:easyrefreshview="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    >
+    android:layout_height="match_parent">
 
-    <com.ray.easylistview.EasyListView
+    <com.ray.easyrefreshview.EasyRefreshView
         android:id="@+id/user_elv"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        easylist:layoutType="linear"
-        easylist:normalLayout="@layout/item_normal"
-        easylist:loadingLayout="@layout/foot_loading"
-        easylist:nomoreLayout="@layout/foot_loading_nomore_data"
-        easylist:errorLayout="@layout/foot_loading_error"/>
+        easyrefreshview:layoutType="linear"
+        easyrefreshview:normalLayout="@layout/item_normal"
+        easyrefreshview:loadingLayout="@layout/foot_loading"
+        easyrefreshview:nomoreLayout="@layout/foot_loading_nomore_data"
+        easyrefreshview:errorLayout="@layout/foot_loading_error"/>
 </RelativeLayout>

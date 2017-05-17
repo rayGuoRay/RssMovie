@@ -1,6 +1,6 @@
 <manifest
     xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.ray.easylistview">
+    package="com.ray.easyrefreshview">
 
     <application
         android:allowBackup="true"
