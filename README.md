@@ -56,6 +56,9 @@ EasyRefreshView is based on RecyclerView and SwipeRefreshLayout for developers t
 ## Feedback
 * Email: guoray@yeah.net
 
+## Blog
+* http://www.jianshu.com/u/e80ee485cfce
+
 ## ChangeLog
 
 #### Version 0.5.9
