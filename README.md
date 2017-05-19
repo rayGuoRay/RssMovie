@@ -2,6 +2,13 @@
 
 EasyRefreshView is based on RecyclerView and SwipeRefreshLayout for developers to easily implements pull refresh and drop refresh list widget
 
+## Screenshots
+
+<table><tr>
+<td><img src="drop_down.gif" width="400px" height="600px" border=0></td>
+<td><img src="pull_up.gif" width="400px" height="600px" border=0></td>
+</tr></table>
+
 ## Usage
 1. Include the library as local library project.
 
