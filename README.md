@@ -4,7 +4,8 @@ EasyRefreshView is based on RecyclerView and SwipeRefreshLayout for developers t
 
 ## Usage
 1. Include the library as local library project.
->compile 'com.ray.easyrefreshview:easy-refresh-view:0.5.9'
+
+        compile 'com.ray.easyrefreshview:easy-refresh-view:0.5.9'
 
 2. Customize the Itemview display
 
