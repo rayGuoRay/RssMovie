@@ -1,8 +1,8 @@
-### EasyRefreshView
+## EasyRefreshView
 
 EasyRefreshView is based on RecyclerView and SwipeRefreshLayout for developers to easily implements pull refresh and drop refresh list widget
-***
-#### Usage
+
+## Usage
 1. Include the library as local library project.
 >compile 'com.ray.easyrefreshview:easy-refresh-view:0.5.9'
 
@@ -23,27 +23,48 @@ EasyRefreshView is based on RecyclerView and SwipeRefreshLayout for developers t
 
 3. Refresh view with the data from callback
 
+        public void onTopLoadStarted() {
+            list.clear();
+            startRxLoad(0);
+        }
+
+        public void onBottomLoadStarted(int position) {
+            if (position >= mTotalCount) {
+                erv.setFootViewState(EasyRefreshAdapter.FOOT_STATE_LOAD_NOMORE);
+                return;
+            }
+            erv.setFootViewState(EasyRefreshAdapter.FOOT_STATE_LOADING);
+            startRxLoad(position + 1);
+        }
+
 4. Customize the layout with bottom status
 
-#### Feedback
-- Email: guoray@yeah.net
+        easyrefreshview:layoutType="linear"
+        easyrefreshview:normalLayout="@layout/item_normal"
+        easyrefreshview:loadingLayout="@layout/foot_loading"
+        easyrefreshview:nomoreLayout="@layout/foot_loading_nomore_data"
+        easyrefreshview:errorLayout="@layout/foot_loading_error"
 
-#### ChangeLog
-***
-##### Version 0.5.9
-- Initial Build
-#### License
-***
-> Copyright 2017, Ray.Guo
+## Feedback
+* Email: guoray@yeah.net
 
->Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+## ChangeLog
 
->   http://www.apache.org/licenses/LICENSE-2.0
+#### Version 0.5.9
+* Initial Build
 
->Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+## License
+
+    Copyright 2017, Ray.Guo
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
